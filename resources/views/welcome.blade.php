@@ -8,9 +8,7 @@
 </head>
 <body>
     <div id="app">
-        <v-app app>
-            <mainapp/>
-        </v-app>
+        <mainapp/>
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
 </body>
