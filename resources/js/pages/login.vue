@@ -8,27 +8,48 @@
                 lg="4"
                 sm="12"
                 >
+                        <v-snackbar
+                        top
+                        :color="snackbarColor"
+                        v-model="snackbar"
+                        >
+                        {{ snackbar_msg }}
+
+                        <template v-slot:action="{ attrs }">
+                            <v-btn
+                            color="white"
+                            text
+                            v-bind="attrs"
+                            @click="snackbar = false"
+                            icon
+                            >
+                            <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </template>
+                        </v-snackbar>
                     <v-card class="pa-5 mt-16 animate__animated animate__fadeIn">
                         <h2 class="text-center">Patient Tracker</h2>
                         <h3 class="text-center py-2">Login</h3>
-                        <v-form ref="form">
+                        <v-form ref="form" v-model="valid">
                             <v-text-field
-                                v-model="email"
+                                v-model="loginForm.email"
                                 label="E-mail"
                                 required
+                                :rules="emailRules"
                                 outlined
                                 dense
                             ></v-text-field>
                             <v-text-field
-                                v-model="password"
+                                v-model="loginForm.password"
                                 label="Password"
                                 required
                                 type="password"
+                                :rules="[v => !!v || 'Password is required']"
                                 outlined
                                 dense
                             ></v-text-field>
                             <v-row justify="center">
-                            <v-btn color="primary" class="mb-1" @click="login">
+                            <v-btn color="primary" class="mb-1" :disabled="!valid" @click="login">
                                 LOGIN
                             </v-btn>
                             </v-row>
@@ -49,32 +70,39 @@
 export default {
     data() {
         return {
+            valid: true,
+            snackbar: false,
+            snackbarColor: "",
+            snackbar_msg: "",
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
             drawer: false,
             group: null,
+            loginForm :{
             email: "",
-            password: "",
+            password: ""
+            }
         };
     },
     methods: {
             async login() {
-			if (this.email.trim()=='') return this.error('Email is required');
-			if (this.password.trim()=='') return this.error('Password is required');
-            if (this.password.length < 6) return this.error('Incorrect Login credentials');
             this.isLogging = true
-            const res = await this.callApi('post','app/login', this.data)
-            if (res.status === 200) {
-                this.success(res.data.msg)
+            const res = await this.callApi('post','app/login', this.loginForm)
+            if (res.status == 200) {
+                this.successMsg(res.data.msg)
                 window.location = '/'
             }else{
-                if (res.status === 401) {
-                    this.error(res.data.msg)
-                }else if (res.status === 422) {
+                if (res.status == 401) {
+                    return this.errorMsg(res.data.msg)
+                }else if (res.status == 422) {
                 for(let i in res.data.errors){
-						this.error(res.data.errors[i][0])
+						this.errorMsg(res.data.errors[i][0])
 					}    
                 }
                 else{
-                    this.swr()
+                    this.swrMsg()
                 }
             }
             this.isLogging = false

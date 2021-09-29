@@ -30,6 +30,11 @@ Vue.mixin(common);
 Vue.component('mainapp', require('./components/mainapp.vue').default);
 Vue.component('app2', require('./components/app2.vue').default);
 
+Vue.filter('formatDate', function (value) {
+    let d = new Date( value );
+    let date = d.toDateString();
+    return date
+  })
 
 const app = new Vue({
     el: '#app',

@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PatientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +16,16 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-Route::get('/',[HomeController::class, 'index']);
+Route::prefix('app')->group(function(){
+    Route::get('/get_patients',[PatientController::class, 'getPatients']);
+    Route::post('/add_patient',[PatientController::class, 'addPatient']);
 
+    Route::post('/register',[AuthController::class, 'register']);
+    Route::post('/login',[AuthController::class, 'login']);
+
+});
+
+Route::get('/logout',[AuthController::class, 'logout']);
+Route::get('/',[HomeController::class, 'index']);
 Route::any('{slug}', [HomeController::class, 'index'])->where('slug', '([A-z\d\-\/_.]+)?');
 

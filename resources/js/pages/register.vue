@@ -5,7 +5,7 @@
                 <v-col class="mt-3" cols="12" md="6" lg="4" sm="12">
                         <v-snackbar
                         top
-                        color="red darken-2"
+                        :color="snackbarColor"
                         v-model="snackbar"
                         >
                         {{ snackbar_msg }}
@@ -53,6 +53,7 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
+                                        v-model="registerForm.email"
                                         outlined
                                         dense
                                         label="Email*"
@@ -65,7 +66,7 @@
                                     <vue-tel-input
                                         validCharactersOnly
                                         mode="international"
-                                        v-model="registerForm.contact"
+                                        v-model="registerForm.phone"
                                     ></vue-tel-input>
                                 </v-col>
                                 <v-col cols="12">
@@ -121,6 +122,7 @@ export default {
     data() {
         return {
             snackbar: false,
+            snackbarColor: "",
             snackbar_msg: "",
             drawer: false,
             group: null,
@@ -135,7 +137,7 @@ export default {
                 email: "",
                 password: "",
                 password2: "",
-                contact: ""
+                phone: ""
             },
         };
     },
@@ -145,24 +147,35 @@ export default {
                 this.snackbar_msg = "Passwords don't match"
                 return this.snackbar = true
                 };
-            if (this.registerForm.contact.trim() ==  "") {
-                this.snackbar_msg = "Contact field is empty"
+            if (this.registerForm.phone.trim() ==  "") {
+                this.snackbar_msg = "phone field is empty"
                 return this.snackbar = true
                 };
             this.isLogging = true;
             const res = await this.callApi("post", "app/register", this.registerForm);
-            if (res.status === 200) {
-                this.success(res.data.msg);
-                window.location = "/";
+            if (res.status === 201) {
+
+                this.$swal.fire({
+                icon: 'success',
+                title: 'Registration Succesful',
+                text: 'You can now login',
+                showCancelButton: true,
+                confirmButtonText: 'OK',
+                }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    window.location = "/login";
+                } 
+                })
             } else {
                 if (res.status === 401) {
-                    this.error(res.data.msg);
+                    this.errorMsg(res.data.msg);
                 } else if (res.status === 422) {
                     for (let i in res.data.errors) {
-                        this.error(res.data.errors[i][0]);
+                        this.errorMsg(res.data.errors[i][0]);
                     }
                 } else {
-                    this.swr();
+                    this.swrMsg();
                 }
             }
             this.isLogging = false;

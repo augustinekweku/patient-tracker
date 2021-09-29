@@ -36,10 +36,10 @@
                     <v-list-item link>
                         <v-list-item-content>
                             <v-list-item-title class="text-h6">
-                                Sandra Adams
+                                {{this.user.first_name + ' ' + this.user.last_name}}
                             </v-list-item-title>
                             <v-list-item-subtitle
-                                >sandra_a88@gmail.com</v-list-item-subtitle
+                                >{{this.user.email}}</v-list-item-subtitle
                             >
                         </v-list-item-content>
                     </v-list-item>
@@ -66,7 +66,15 @@
                         </v-list-item>
                     </v-list-item-group>
                 </v-list>
+                <template v-slot:append>
+                <div class="pa-2">
+                <v-btn color="error"  @click="logout" block>
+                    Logout <v-icon right>mdi-exit-to-app</v-icon>
+                </v-btn>
+                </div>
+            </template>
             </v-navigation-drawer>
+
 
             <!-- Sizes your content based upon application components -->
             <v-main class="mt-10">
@@ -114,14 +122,27 @@
 </template>
 <script>
 export default {
+    props: ['user'],
     data() {
         return {
             drawer: false,
             group: null
         };
     },
-    methods: {},
-    created() {}
+    methods: {
+        async logout() {
+        const res = await this.callApi("get", "/logout");
+        if (res.status == 200) {
+            window.location = "/login"
+        } else {
+            this.swrMsg()
+        }
+        }
+    },
+    created() {
+        this.$store.commit('setUpdateUser', this.user)
+
+    }
 };
 </script>
 
