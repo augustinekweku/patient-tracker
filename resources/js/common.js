@@ -20,24 +20,28 @@ export default {
 
         },
         successMsg(msg){
-            this.snackbar_msg = msg
-            this.snackbarColor = "success";
-            return this.snackbar = true           
+            Toast.fire({
+                icon: 'success',
+                title: msg
+                })          
         },
         errorMsg(msg){
-            this.snackbar_msg = msg
-            this.snackbarColor = "red darken-2";
-            return this.snackbar = true           
+            Toast.fire({
+                icon: 'error',
+                title: msg
+                })           
         },
         infoMsg(msg){
-            this.snackbar_msg = msg
-            this.snackbarColor = "primary";
-            return this.snackbar = true           
+            Toast.fire({
+                icon: 'info',
+                title: msg
+                })          
         },
         swrMsg(){
-            this.snackbar_msg = "Something went wrong"
-            this.snackbarColor = "error";
-            return this.snackbar = true           
+            Toast.fire({
+                icon: 'error',
+                title: 'Something went wrong'
+                })          
         },
 
     },

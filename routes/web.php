@@ -17,6 +17,8 @@ use App\Http\Controllers\PatientController;
 */
 
 Route::prefix('app')->group(function(){
+    Route::post('/delete_patient',[PatientController::class, 'deletePatient']);
+    Route::post('/edit_patient',[PatientController::class, 'editPatient']);
     Route::get('/get_patients',[PatientController::class, 'getPatients']);
     Route::post('/add_patient',[PatientController::class, 'addPatient']);
 

@@ -1,6 +1,6 @@
 <template>
     <div class="login-page">
-        <v-container>
+        <v-container fluid>
             <v-row justify="center">
                 <v-col
                 cols="12"

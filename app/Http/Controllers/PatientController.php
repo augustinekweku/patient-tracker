@@ -8,9 +8,40 @@ use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
+    public function deletePatient(Request $request)
+    {
+        //validate request
+        $this->validate($request, [
+            'id' => 'required'
+        ]);
+        return Patient::where('id', $request->id)->delete();
+    }
     public function getPatients(Request $request)
     {
         return Patient::orderBy('id', 'desc')->get();
+    }
+
+    public function editPatient(Request $request)
+    {
+        $this->validate($request, [
+            'first_name' =>'required',
+            'last_name' =>'required',
+            'address' =>'required',
+            'age' =>'required',
+            'gender' =>'required',
+            'email' =>"bail|required|email|unique:patients,email,$request->id",
+            'phone' =>"bail|required|unique:patients,phone,$request->id",
+        ]);
+        return Patient::where('id', $request->id)->update([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'address' => $request->address,
+            'age' => $request->age,
+            'gender' => $request->gender,
+            'email' => $request->email,
+            'phone' => $request->phone,
+        ]);
+    
     }
 
     public function addPatient(Request $request)

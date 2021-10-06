@@ -76,12 +76,73 @@
             </v-navigation-drawer>
 
 
+
             <!-- Sizes your content based upon application components -->
             <v-main class="mt-10">
                 <!-- Provides the application the proper gutter -->
                 <v-container fluid>
-                    <!-- If using vue-router -->
+            <v-row
+                v-if="$route.path != '/login' &&
+                $route.path != '/register'"  >
+                <v-col cols="3" class="ps-5 d-none d-md-block">
+            <v-card
+            v-if="$route.path != '/login' &&
+            $route.path != '/register'"
+            elevation="12"
+            width="256"
+            color="indigo darken-2"
+            class="mt-10 "
+            >
+            <v-navigation-drawer
+                floating
+                permanent
+            >
+                <v-list
+                dense
+                rounded
+                >
+                <v-list-item
+                    link
+                >
+                    <v-list-item-icon>
+                    <v-icon>mdi-home</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                    <v-list-item-title>Dashboard</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item
+                    link
+                >
+                    <v-list-item-icon>
+                    <v-icon>mdi-home</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                    <v-list-item-title>Dashboard</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                
+                </v-list>
+            </v-navigation-drawer>
+            </v-card>
+
+                </v-col>
+                <v-col  cols="12" sm="12" md="9" lg="9" xl="9">
                     <router-view></router-view>
+                </v-col>               
+            </v-row>
+            
+            <!-- FOR LOGIN PAGES -->
+            <v-row  v-if="$route.path == '/login' ||
+                $route.path == '/register'" >
+                <v-col  cols="12">
+                    <router-view></router-view>
+                </v-col>               
+
+            </v-row>
                 </v-container>
 
                 <!-- BOTTOM NAVIGATION -->

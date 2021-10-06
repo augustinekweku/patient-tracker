@@ -1,9 +1,9 @@
 <template>
     <div class="page container animate__animated animate__fadeIn">
-        <v-row justify="center">
+        <v-row>
             <v-col cols="12" sm="12" md="6" lg="6">
                 <!-- SNACKBAR FOR ALERTS -->
-                <v-snackbar top :color="snackbarColor" v-model="snackbar">
+                <v-snackbar class="snackbar mt-5" top :color="snackbarColor" v-model="snackbar">
                     {{ snackbar_msg }}
 
                     <template v-slot:action="{ attrs }">
@@ -31,7 +31,7 @@
                             </v-icon>
                         </v-list-item-avatar>
 
-                        <v-list-item-content>
+                        <v-list-item-content @click="showPatient(patient, i)">
                             <v-list-item-title>{{
                                 patient.first_name + ' ' + patient.last_name
                             }}</v-list-item-title>
@@ -42,50 +42,35 @@
                         </v-list-item-content>
 
                         <v-list-item-action>
-                            <v-btn @click="showPatientId(patient, i)" icon>
-                                <v-icon color="grey lighten-1">
-                                    mdi-information
+                            <v-row align="center">
+                                <v-col cols="6"> 
+                                <v-btn @click="showEditDialog(patient, i)" icon ripple>
+                                <v-icon color="#303f9f ">
+                                    mdi-pencil
                                 </v-icon>
-                            </v-btn>
+                                </v-btn>
+                                    </v-col>
+                                <v-col cols="6">
+                                <v-btn @click="showDeletingDialog(patient, i)" icon ripple>
+                                <v-icon color="red">
+                                    mdi-delete
+                                </v-icon>
+                                </v-btn>
+                                </v-col>
+                            </v-row>
                         </v-list-item-action>
                     </v-list-item>
 
-                    <v-divider inset></v-divider>
+                    <v-divider ></v-divider>
 
-                    <v-subheader inset>
-                        Files
-                    </v-subheader>
 
-                    <v-list-item v-for="item in items2" :key="item.title" link>
-                        <v-list-item-avatar>
-                            <v-icon :class="[item.iconClass]">
-                                {{ item.icon }}
-                            </v-icon>
-                        </v-list-item-avatar>
 
-                        <v-list-item-content>
-                            <v-list-item-title>{{
-                                item.title
-                            }}</v-list-item-title>
 
-                            <v-list-item-subtitle>{{
-                                item.subtitle
-                            }}</v-list-item-subtitle>
-                        </v-list-item-content>
-
-                        <v-list-item-action>
-                            <v-btn icon ripple>
-                                <v-icon color="grey lighten-1">
-                                    mdi-information
-                                </v-icon>
-                            </v-btn>
-                        </v-list-item-action>
-                    </v-list-item>
                 </v-list>
             </v-col>
 
-            <v-btn elevation="2" fab right fixed icon @click="addPatientDialog = true">
-                <v-icon>mdi-plus</v-icon>
+            <v-btn elevation="2" small fab right fixed color="#303f9f"  @click="addPatientDialog = true">
+                <v-icon color="white">mdi-plus</v-icon>
             </v-btn>
         </v-row>
 
@@ -98,7 +83,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-container>
-                        <v-form ref="form" v-model="valid">
+                        <v-form ref="form2" v-model="valid">
                             <v-row>
                                 <v-col cols="12" sm="6" md="6">
                                     <v-text-field
@@ -187,7 +172,7 @@
                     <v-btn
                         class="white--text"
                         color="red darken-1"
-                        @click="addPatientDialog = false"
+                        @click="closePatientDialog"
                     >
                         Close
                     </v-btn>
@@ -210,20 +195,21 @@
         <v-dialog v-model="viewPatientDialog" persistent max-width="600px">
             <v-card>
                 <v-card-title>
-                    <span class="text-h5">Patient ID: {{viewPatientObj.patient_id}}</span>
+                    <span class="text-h5">Patient ID: {{editPatientObj.patient_id}}</span>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
-                        <v-form ref="form" v-model="valid">
+                        <v-form ref="form2" v-model="editValid">
                             <v-row>
                                 <v-col cols="12" sm="6" md="6">
                                     <v-text-field
                                         label="First Name*"
                                         dense
-                                        v-model="viewPatientObj.first_name"
                                         :rules="[
                                             v => !!v || 'First name is required'
                                         ]"
+                                        :disabled="!isEditDialog"
+                                        v-model="editPatientObj.first_name"
                                         required
                                         outlined
                                     ></v-text-field>
@@ -232,7 +218,8 @@
                                     <v-text-field
                                         outlined
                                         dense
-                                        v-model="viewPatientObj.last_name"
+                                        :disabled="!isEditDialog"
+                                        v-model="editPatientObj.last_name"
                                         label="Last Name*"
                                         :rules="[
                                             v => !!v || 'Last name is required'
@@ -242,53 +229,60 @@
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
-                                        v-model="viewPatientObj.address"
+                                        v-model="editPatientObj.address"
                                         outlined
-                                        dense
+                                        :disabled="!isEditDialog"
                                         :rules="[
                                             v => !!v || 'Address is required'
                                         ]"
+                                        dense
                                         label="Address*"
                                         required
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
                                     <vue-tel-input
+                                    :disabled="!isEditDialog"
                                         validCharactersOnly
                                         mode="international"
-                                        v-model="viewPatientObj.phone"
+                                        v-model="editPatientObj.phone"
                                     ></vue-tel-input>
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field
-                                        v-model="viewPatientObj.email"
+                                        v-model="editPatientObj.email"
                                         outlined
                                         dense
                                         :rules="emailRules"
+                                        :disabled="!isEditDialog"
                                         label="Email*"
                                         required
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="12" sm="6">
                                     <v-text-field
-                                        v-model="viewPatientObj.age"
+                                        v-model="editPatientObj.age"
                                         outlined
+                                        :disabled="!isEditDialog"
+                                        :rules="[
+                                            v => !!v || 'Address is required'
+                                        ]"
                                         dense
                                         label="Age*"
                                         required
                                         type="number"
-                                        :rules="[v => !!v || 'Age is required']"
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="12" sm="6">
                                     <v-select
+                                        :disabled="!isEditDialog"
                                         dense
                                         outlined
-                                        v-model="viewPatientObj.gender"
-                                        :items="genderItems"
                                         :rules="[
-                                            v => !!v || 'Gender is required'
+                                            v => !!v || 'Address is required'
                                         ]"
+                                        v-model="editPatientObj.gender"
+                                        :items="genderItems"
                                         label="Gender"
                                         required
                                     ></v-select>
@@ -303,34 +297,48 @@
                     <v-btn
                         class="white--text"
                         color="red darken-1"
-                        @click="viewPatientDialog = false"
+                        @click="closePatientDialog"
                     >
                         Close
                     </v-btn>
+                    
                     <v-btn
-                        @click="addPatient"
+                        v-if="isEditDialog"
+                        @click="editPatient"
                         color="blue darken-1"
                         class="white--text"
-                        :disabled="!valid"
+                        :disabled="!editValid"
                     >
-                        Save
+                        EDIT
                     </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
         <!-- END OF MODALFOR EDITING AND VIEWING A PATIENT -->
+
+
+        <!-- DELETE CONFIRMATION -->
+        <deleteDialog></deleteDialog>
+        <!-- END OF DELETE CONFIRMATION -->
     </div>
 </template>
 
 <script>
+import deleteDialog from "../components/deleteDialog.vue";
+import { mapGetters } from "vuex";
 export default {
+    components: {
+        deleteDialog
+    },
     data() {
         return {
             viewPatientDialog: false,
             snackbar: false,
+            isEditDialog: false,
             snackbarColor: "",
             snackbar_msg: "",
+            editValid: true,
             valid: true,
             addPatientDialog: false,
             patients: [],
@@ -340,7 +348,7 @@ export default {
                 v => /.+@.+\..+/.test(v) || "E-mail must be valid"
             ],
             patient_id: "",
-            viewPatientObj: {
+            editPatientObj: {
                 patient_id: "",
                 first_name: "",
                 last_name: "",
@@ -360,46 +368,72 @@ export default {
                 email: "",
                 phone: ""
             },
-            items: [
-                {
-                    icon: "mdi-folder",
-                    iconClass: "grey lighten-1 white--text",
-                    title: "Photos",
-                    subtitle: "Jan 9, 2014"
-                },
-                {
-                    icon: "mdi-folder",
-                    iconClass: "grey lighten-1 white--text",
-                    title: "Recipes",
-                    subtitle: "Jan 17, 2014"
-                },
-                {
-                    icon: "mdi-folder",
-                    iconClass: "grey lighten-1 white--text",
-                    title: "Work",
-                    subtitle: "Jan 28, 2014"
-                }
-            ],
-            items2: [
-                {
-                    icon: "mdi-clipboard-text",
-                    iconClass: "blue white--text",
-                    title: "Vacation itinerary",
-                    subtitle: "Jan 20, 2014"
-                },
-                {
-                    icon: "mdi-gesture-tap-button",
-                    iconClass: "amber white--text",
-                    title: "Kitchen remodel",
-                    subtitle: "Jan 10, 2014"
-                }
-            ]
-        };
+        }
     },
     methods: {
-        async showPatientId(patient, i){
-           this.viewPatientObj = patient;
+        async editPatient(){
+            if (this.editPatientObj.phone.trim() == "") {
+                return this.errorMsg("phone is required");
+                }
+            const res = await this.callApi(
+                "post",
+                "app/edit_patient",
+                this.editPatientObj
+            );                
+            if (res.status == 200) {
+                this.viewPatientDialog = false;
+                this.isEditDialog = false
+
+                this.successMsg("Patient edited successfully");
+                } else {
+                if (res.status == 401) {
+                    return this.errorMsg(res.data.msg);
+                } else if (res.status == 422) {
+                    for (let i in res.data.errors) {
+                        this.errorMsg(res.data.errors[i][0]);
+                    }
+                } else {
+                    this.swrMsg();
+                }
+            }
+            },
+        showDeletingDialog(patient, i) {
+            const deleteModalObj = {
+                showDeleteDialog: true,
+                deleteUrl: "app/delete_patient",
+                data: patient,
+                isDeleted: false,
+                msg: `Are you sure you want to delete  ${patient.first_name}'s records?`,
+                successMsg: "Patient deleted successfully"
+            };
+            this.$store.commit("setDeletingModalObj", deleteModalObj);
+            //console.log('delete method called ')
+        },
+        closePatientDialog(){
+            this.viewPatientDialog = false;
+            this.addPatientDialog = false;
+            this.isEditDialog = false;
+        },
+        async showPatient(patient, i){
+           this.editPatientObj = patient;
            this.viewPatientDialog = true;
+        },
+        async showEditDialog(patient, i){
+            //to prevent real time editing
+            let obj = {
+                id: patient.id,
+                patient_id: patient.patient_id,
+                first_name: patient.first_name,
+                last_name: patient.last_name,
+                gender: patient.gender,
+                age: patient.age,
+                address: patient.address,
+                email: patient.email,
+                phone: patient.phone,                    
+                }
+            this.isEditDialog = true;
+            this.editPatientObj = obj;
+            this.viewPatientDialog = true;
         },
         generatePatientId() {
             const alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM";
@@ -416,7 +450,7 @@ export default {
         },
         async addPatient() {
             if (this.patient.phone.trim() == "") {
-                this.errorMsg("phone is required");
+                return this.errorMsg("phone is required");
             }
             const res = await this.callApi(
                 "post",
@@ -464,6 +498,18 @@ export default {
     created() {
         this.generatePatientId();
         this.getPatients();
+    },
+        computed: {
+        ...mapGetters(["getDeleteModalObj"])
+    },
+    watch: {
+        getDeleteModalObj(obj) {
+            console.log(obj);
+            if (obj.isDeleted) {
+                console.log(obj);
+                this.getPatients();
+            }
+        }
     }
 };
 </script>
@@ -472,4 +518,8 @@ export default {
 /* .page{
     height: 100vh;
 } */
+.snackbar{
+    z-index: 999;
+}
+
 </style>

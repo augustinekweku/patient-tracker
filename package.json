@@ -28,6 +28,8 @@
     },
     "dependencies": {
         "animate.css": "^4.1.1",
+        "sweetalert2": "^11.1.7",
+        "vee-validate": "^3.4.13",
         "vue": "^2.6.14",
         "vue-router": "^3.5.2",
         "vue-sweetalert2": "^5.0.2",

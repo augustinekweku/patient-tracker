@@ -14,15 +14,32 @@ import 'vue-tel-input/dist/vue-tel-input.css'
 
 Vue.use(VueTelInput)
 
-import vuetify from './vuetify';
 
 import animateCss from 'animate.css';
 Vue.use(animateCss);
 
-import VueSweetalert2 from 'vue-sweetalert2';
-// If you don't need the styles, do not connect
-import 'sweetalert2/dist/sweetalert2.min.css';
-Vue.use(VueSweetalert2); 
+import Swal from 'sweetalert2'
+
+import 'sweetalert2/src/sweetalert2.scss'
+window.Swal = Swal;
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+    })
+window.Toast = Toast;
+
+import vuetify from './vuetify';
+
+
+  
+
 
 import common from './common'
 Vue.mixin(common);
