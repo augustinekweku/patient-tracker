@@ -11,9 +11,9 @@ import router from './router'
 import store from './store'
 import VueTelInput from 'vue-tel-input';
 import 'vue-tel-input/dist/vue-tel-input.css'
-
 Vue.use(VueTelInput)
 
+import 'bootstrap/dist/css/bootstrap.css'
 
 import animateCss from 'animate.css';
 Vue.use(animateCss);
@@ -37,8 +37,18 @@ window.Toast = Toast;
 
 import vuetify from './vuetify';
 
+import VueGoodTablePlugin from 'vue-good-table';
+// import the styles
+import 'vue-good-table/dist/vue-good-table.css'
+Vue.use(VueGoodTablePlugin);
 
-  
+
+
+import vueCalendar from 'vue2-simple-calendar';
+
+Vue.use(vueCalendar, {
+  // configuration goes here.
+});
 
 
 import common from './common'
@@ -52,7 +62,6 @@ Vue.filter('formatDate', function (value) {
     let date = d.toDateString();
     return date
   })
-
 const app = new Vue({
     el: '#app',
     vuetify,

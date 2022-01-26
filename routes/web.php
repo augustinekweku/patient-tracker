@@ -17,6 +17,14 @@ use App\Http\Controllers\PatientController;
 */
 
 Route::prefix('app')->group(function(){
+    Route::get('/get_all_medical_notes',[PatientController::class, 'getAllMedicalNotes']);
+    Route::post('/update_clinic_profile',[PatientController::class, 'updateClinicProfile']);
+    Route::get('/get_clinic_profile',[PatientController::class, 'getClinicProfile']);
+    Route::post('/add_clinic_profile',[PatientController::class, 'addClinicProfile']);
+    Route::post('/add_medical_notes',[PatientController::class, 'addMedicalNotes']);
+    Route::get('/get_all_appointments',[PatientController::class, 'getAllAppointments']);
+    Route::get('/get_appointments',[PatientController::class, 'getAppointments']);
+    Route::post('/add_appointment',[PatientController::class, 'addAppointment']);
     Route::post('/delete_patient',[PatientController::class, 'deletePatient']);
     Route::post('/edit_patient',[PatientController::class, 'editPatient']);
     Route::get('/get_patients',[PatientController::class, 'getPatients']);

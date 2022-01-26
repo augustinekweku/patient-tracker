@@ -1,7 +1,7 @@
 <template>
     <div class="page container animate__animated animate__fadeIn">
         <v-row>
-            <v-col cols="12" sm="12" md="6" lg="6">
+            <v-col cols="12" sm="12" md="12" lg="12">
                 <!-- SNACKBAR FOR ALERTS -->
                 <v-snackbar class="snackbar mt-5" top :color="snackbarColor" v-model="snackbar">
                     {{ snackbar_msg }}
@@ -488,7 +488,7 @@ export default {
                 "app/get_patients"
             );
             if ((getPatientsApi.status = 200)) {
-                this.patients = getPatientsApi.data;
+                this.patients = getPatientsApi.data.patients;
                 //console.log(getCompanies.data);
             } else {
                 this.swr();

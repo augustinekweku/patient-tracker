@@ -19,6 +19,13 @@ export default {
             }
 
         },
+        successAlert(msg){
+            Swal.fire(
+                'Success',
+                msg,
+                'success'
+              )
+        },
         successMsg(msg){
             Toast.fire({
                 icon: 'success',

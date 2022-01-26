@@ -92,7 +92,7 @@ export default {
             const res = await this.callApi('post','app/login', this.loginForm)
             if (res.status == 200) {
                 this.successMsg(res.data.msg)
-                window.location = '/'
+                window.location = '/dashboard'
             }else{
                 if (res.status == 401) {
                     return this.errorMsg(res.data.msg)
